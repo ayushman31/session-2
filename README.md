@@ -1,36 +1,137 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+APIs Created and Their Functionality
 
-## Getting Started
+ GET `/api/contacts` - Fetch all contacts
+- Returns list of all contacts in the database
 
-First, run the development server:
+ POST `/api/contacts` - Create new contact
+- Creates a new contact with name, email, phone, and message
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+ GET `/api/contacts/[id]` - Fetch single contact
+- Returns specific contact by ID
+
+ PUT `/api/contacts/[id]` - Update contact
+- Updates existing contact information
+
+ DELETE `/api/contacts/[id]` - Delete contact
+- Removes contact from database
+
+Database Used and Integration
+
+Database: PostgreSQL
+
+Integration: 
+- Used `pg` library (PostgreSQL client for Node.js)
+- Direct SQL queries without ORM
+- Automatic table creation on first API call
+- Connection pooling for performance
+
+Schema:
+```sql
+CREATE TABLE contacts (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  phone VARCHAR(20),
+  message TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## How to Run Your Server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Install PostgreSQL and create a database
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Create `.env.local` file:
+```env
+DATABASE_URL=postgresql://username:password@localhost:5432/database_name
+```
 
-## Learn More
+3. Install dependencies:
+```bash
+pnpm install
+```
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the server:
+```bash
+pnpm dev
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Server runs on `http://localhost:3000`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## How to Run Frontend Locally
 
-## Deploy on Vercel
+The frontend is part of the same Next.js application. Just run:
+```bash
+pnpm dev
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Frontend will be available at `http://localhost:3000`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## How to Interact with API
+
+### Create Contact
+```bash
+curl -X POST http://localhost:3000/api/contacts \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "123-456-7890",
+    "message": "Hello world"
+  }'
+```
+
+**Response**:
+```json
+{
+  "id": 1,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "phone": "123-456-7890",
+  "message": "Hello world",
+  "created_at": "2024-01-01T00:00:00.000Z"
+}
+```
+
+### Get All Contacts
+```bash
+curl http://localhost:3000/api/contacts
+```
+
+**Response**:
+```json
+[
+  {
+    "id": 1,
+    "name": "John Doe",
+    "email": "john@example.com",
+    "phone": "123-456-7890",
+    "message": "Hello world",
+    "created_at": "2024-01-01T00:00:00.000Z"
+  }
+]
+```
+
+### Update Contact
+```bash
+curl -X PUT http://localhost:3000/api/contacts/1 \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "John Smith",
+    "email": "johnsmith@example.com",
+    "phone": "123-456-7890",
+    "message": "Updated message"
+  }'
+```
+
+### Delete Contact
+```bash
+curl -X DELETE http://localhost:3000/api/contacts/1
+```
+
+**Response**:
+```json
+{
+  "message": "Contact deleted successfully"
+}
+```
