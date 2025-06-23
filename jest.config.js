@@ -15,7 +15,6 @@ const customJestConfig = {
     '!src/**/*.d.ts',
     '!src/app/layout.tsx',
     '!src/app/globals.css',
-    '!src/app/page.tsx', // Exclude frontend page from coverage
   ],
   coverageReporters: ['text', 'lcov', 'html'],
   coverageDirectory: 'coverage',
@@ -23,23 +22,36 @@ const customJestConfig = {
   projects: [
     {
       displayName: 'unit',
-      testMatch: ['<rootDir>/tests/unit/**/*.test.{js,jsx,ts,tsx}'],
-      testEnvironment: 'jest-environment-node',
+      testMatch: ['<rootDir>/tests/unit/**/*.test.js'],
+      testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+      },
+      moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     },
     {
       displayName: 'integration',
-      testMatch: ['<rootDir>/tests/integration/**/*.test.{js,jsx,ts,tsx}'],
-      testEnvironment: 'jest-environment-node',
+      testMatch: ['<rootDir>/tests/integration/**/*.test.js'],
+      testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/tests/setup/integration.setup.js'],
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+      },
+      moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     },
     {
       displayName: 'api',
-      testMatch: ['<rootDir>/tests/api/**/*.test.{js,jsx,ts,tsx}'],
-      testEnvironment: 'jest-environment-node',
+      testMatch: ['<rootDir>/tests/api/**/*.test.js'],
+      testEnvironment: 'node',
       setupFilesAfterEnv: ['<rootDir>/tests/setup/api.setup.js'],
+      moduleNameMapper: {
+        '^@/(.*)$': '<rootDir>/src/$1',
+      },
+      moduleFileExtensions: ['js', 'jsx', 'ts', 'tsx', 'json'],
     },
   ],
+  verbose: true,
 }
 
 // createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async

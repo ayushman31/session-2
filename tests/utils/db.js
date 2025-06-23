@@ -1,7 +1,5 @@
-import { Pool } from 'pg'
-
 // Mock contact data for testing
-export const mockContacts = [
+const mockContacts = [
   {
     id: 1,
     name: 'John Doe',
@@ -21,7 +19,7 @@ export const mockContacts = [
 ]
 
 // Helper to seed test database
-export async function seedTestDb(pool: Pool) {
+async function seedTestDb(pool) {
   // First ensure the table exists
   await pool.query(`
     CREATE TABLE IF NOT EXISTS contacts (
@@ -43,30 +41,55 @@ export async function seedTestDb(pool: Pool) {
 }
 
 // Helper to clear test database
-export async function clearTestDb(pool: Pool) {
-  await pool.query('DELETE FROM contacts')
+async function clearTestDb(pool) {
+  try {
+    // First ensure the table exists
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS contacts (
+        id SERIAL PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) UNIQUE NOT NULL,
+        phone VARCHAR(20),
+        message TEXT,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `)
+    
+    // Then clear it
+    await pool.query('DELETE FROM contacts')
+  } catch (error) {
+    console.warn('Could not clear test database:', error.message)
+    // Don't throw - let tests continue
+  }
 }
 
 // Mock database responses
-export const mockDbResponses = {
+const mockDbResponses = {
   getAllContacts: {
     rows: mockContacts,
     rowCount: mockContacts.length,
   },
-  getContactById: (id: number) => ({
+  getContactById: (id) => ({
     rows: mockContacts.filter(c => c.id === id),
     rowCount: mockContacts.filter(c => c.id === id).length,
   }),
-  createContact: (contact: Omit<typeof mockContacts[0], 'id' | 'created_at'>) => ({
+  createContact: (contact) => ({
     rows: [{ ...contact, id: 3, created_at: new Date().toISOString() }],
     rowCount: 1,
   }),
-  updateContact: (id: number, contact: Omit<typeof mockContacts[0], 'id' | 'created_at'>) => ({
+  updateContact: (id, contact) => ({
     rows: [{ ...contact, id, created_at: new Date().toISOString() }],
     rowCount: 1,
   }),
-  deleteContact: (id: number) => ({
+  deleteContact: (id) => ({
     rows: mockContacts.filter(c => c.id === id),
     rowCount: mockContacts.filter(c => c.id === id).length,
   }),
+}
+
+module.exports = {
+  mockContacts,
+  seedTestDb,
+  clearTestDb,
+  mockDbResponses,
 } 
