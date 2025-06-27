@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: postgres-test
+    environment:
+      POSTGRES_DB: contacts_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - keploy-network
+
+  app:
+    build: .
+    container_name: contacts-app
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://postgres:password@postgres:5432/contacts_test
+      - NODE_ENV=development
+    depends_on:
+      - postgres
+    networks:
+      - keploy-network
+    volumes:
+      - .:/app
+      - /app/node_modules
+    working_dir: /app
+
+  keploy:
+    image: ghcr.io/keploy/keploy:latest
+    container_name: keploy-v2
+    privileged: true
+    pid: host
+    ports:
+      - "16789:16789"
+    environment:
+      - KEPLOY_MODE=record
+    networks:
+      - keploy-network
+    volumes:
+      - .:/workspace
+    working_dir: /workspace
+    depends_on:
+      - app
+
+networks:
+  keploy-network:
+    driver: bridge
+
+volumes:
+  postgres_data: 

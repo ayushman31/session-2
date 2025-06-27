@@ -1,0 +1,12 @@
+# Create a .env.local file in your project root with these variables:
+
+# Your PostgreSQL Database Connection
+DATABASE_URL=postgresql://YOUR_USERNAME:YOUR_PASSWORD@YOUR_HOST:5432/YOUR_DATABASE_NAME
+NODE_ENV=development
+
+# Examples:
+# DATABASE_URL=postgresql://postgres:mypassword@localhost:5432/contacts_production
+# DATABASE_URL=postgresql://myuser:mypass@192.168.1.100:5432/myapp
+# DATABASE_URL=postgresql://user:pass@your-cloud-db.com:5432/database
+
+# Note: Replace YOUR_USERNAME, YOUR_PASSWORD, YOUR_HOST, and YOUR_DATABASE_NAME with your actual values 
