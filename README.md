@@ -1,3 +1,8 @@
+Screenshot:
+![image](https://github.com/user-attachments/assets/04acf67a-45bf-4066-b72b-a3a7030bd8e3)
+
+
+
 APIs Created and Their Functionality
 
  GET `/api/contacts` - Fetch all contacts
